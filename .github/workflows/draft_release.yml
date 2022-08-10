@@ -1,0 +1,32 @@
+name: Draft release
+
+on:
+  push:
+    tags:
+      - "production*"
+
+jobs:
+  create-draft-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release name
+        shell: bash
+        id: release_name
+        run: |
+          echo "${GITHUB_REF} -> ${GITHUB_REF#production-}"
+          echo "${GITHUB_REF_NAME} -> ${GITHUB_REF_NAME#production-}"
+          echo "::set-output name=release_name::${GITHUB_REF#production-}"
+      - name: Create draft release
+        id: draft_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
+          draft: true
+          prerelease: false
+
