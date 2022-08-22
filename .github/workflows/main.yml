@@ -1,4 +1,4 @@
-name: Draft release
+name: Main
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
           script: |
             refInfo = {
               owner: context.repo.owner,
-              ref: `refs/tags/${args.automaticReleaseTag}`,
+              ref: 'refs/tags/latest',
               repo: context.repo.repo,
               sha: context.sha,
             }
