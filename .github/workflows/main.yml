@@ -25,13 +25,13 @@ jobs:
             core.info(`Attempting to create or update release tag "${friendlyTagName}"`);
 
             try {
-              await github.git.createRef(refInfo);
+              await github.rest.git.createRef(refInfo);
             } catch (err) {
               const existingTag = refInfo.ref.substring(5); // 'refs/tags/latest' => 'tags/latest'
               core.info(
                 `Could not create new tag "${refInfo.ref}" (${err.message}) therefore updating existing tag "${existingTag}"`,
               );
-              await github.git.updateRef({
+              await github.rest.git.updateRef({
                 ...refInfo,
                 ref: existingTag,
                 force: true,
