@@ -26,6 +26,7 @@ jobs:
 
             try {
               await github.rest.git.createRef(refInfo);
+              core.info(`Successfully created latest release tag "${friendlyTagName}"`);
             } catch (err) {
               const existingTag = refInfo.ref.substring(5); // 'refs/tags/latest' => 'tags/latest'
               core.info(
@@ -36,7 +37,7 @@ jobs:
                 ref: existingTag,
                 force: true,
               });
+              core.info(`Successfully updated latest release tag "${friendlyTagName}"`);
             }
 
-            core.info(`Successfully created or updated latest release tag "${friendlyTagName}"`);
             core.endGroup();
