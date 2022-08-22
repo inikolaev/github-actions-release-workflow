@@ -33,6 +33,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            refInfo = {
+              owner: context.repo.owner,
+              ref: `refs/tags/${args.automaticReleaseTag}`,
+              repo: context.repo.repo,
+              sha: context.sha,
+            }
             core.startGroup('Generating latest release tag');
             const friendlyTagName = refInfo.ref.substring(10); // 'refs/tags/latest' => 'latest'
             core.info(`Attempting to create or update release tag "${friendlyTagName}"`);
