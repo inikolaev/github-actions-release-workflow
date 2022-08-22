@@ -1,0 +1,42 @@
+name: Draft release
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  create-draft-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label latest release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            refInfo = {
+              owner: context.repo.owner,
+              ref: `refs/tags/${args.automaticReleaseTag}`,
+              repo: context.repo.repo,
+              sha: context.sha,
+            }
+            core.startGroup('Generating latest release tag');
+            const friendlyTagName = refInfo.ref.substring(10); // 'refs/tags/latest' => 'latest'
+            core.info(`Attempting to create or update release tag "${friendlyTagName}"`);
+
+            try {
+              await github.git.createRef(refInfo);
+            } catch (err) {
+              const existingTag = refInfo.ref.substring(5); // 'refs/tags/latest' => 'tags/latest'
+              core.info(
+                `Could not create new tag "${refInfo.ref}" (${err.message}) therefore updating existing tag "${existingTag}"`,
+              );
+              await github.git.updateRef({
+                ...refInfo,
+                ref: existingTag,
+                force: true,
+              });
+            }
+
+            core.info(`Successfully created or updated latest release tag "${friendlyTagName}"`);
+            core.endGroup();
