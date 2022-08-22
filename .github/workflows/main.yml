@@ -10,6 +10,7 @@ jobs:
     name: Create latest tag
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Label latest release
         uses: actions/github-script@v6
         with:
